@@ -31,6 +31,7 @@ jQuery.feelywiki = {
 	},
 	"__notParagraph" : function(s){
 		var flag = false;
+		var list = "n";
 		s = s.replace(/={7,}/ig, function(res0){
 			flag = true;
 			return "<hr>";
@@ -59,7 +60,18 @@ jQuery.feelywiki = {
 			flag = true;
 			return "<h1>" + res1 + "</h1>";
 		});
-		
+		s = s.replace(/(# (.+).*)+/ig, function(){
+			flag = true;
+			list = "ol";
+			return "<li>" + arguments[2] + "</li>";
+		});
+		s = s.replace(/(\* (.+).*)+/ig, function(){
+			flag = true;
+			list = "ul";
+			return "<li>" + arguments[2] + "</li>";
+		});
+		if(list=="ol") s = s.replace(/<li>(.*)<\/li>(.|\n)*/igm, function(){return "<ol>" + arguments[0] + "</ol>"});
+		else if(list=="ul") s = s.replace(/<li>(.*)<\/li>(.|\n)*/igm, function(){return "<ul>" + arguments[0] + "</ul>"});
 		if(flag) return s;
 		else return "";
 	},
