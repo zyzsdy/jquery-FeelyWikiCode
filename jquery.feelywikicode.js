@@ -40,6 +40,19 @@ jQuery.feelywiki = {
 		var flag = false;
 		var list = "n";
 		var table = false;
+		//原始文本
+		var org = false;
+		var t = s.replace(/\{code=((.|\n)*)=\}/igm, function(){
+			org = true;
+			return "<code><pre>" + arguments[1] + "</pre></code>";
+		});
+		t = t.replace(/\{=((.|\n)*)=\}/igm, function(){
+			org = true;
+			return arguments[1];
+		});
+		if(org) return t;
+		
+		//分隔线和标题
 		s = s.replace(/={7,}/ig, function(res0){
 			flag = true;
 			return "<hr>";
