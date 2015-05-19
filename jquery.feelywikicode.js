@@ -1,9 +1,13 @@
+/* global jQuery */
 jQuery.feelywiki = {
 	//标题位置
 	"titleElem" : "title",
+	//Wiki内部链接URL前缀
+	"wikiPrefix" : "/wiki/",
 	//设置标题 
-	"setTitle": function(title){
-		this.titleElem = title;	
+	"init": function(obj){
+		if(obj.titleElem != undefined && obj.titleElem != "") this.titleElem = obj.titleElem;
+		if(obj.wikiPrefix != undefined && obj.wikiPrefix != "") this.wikiPrefix = obj.wikiPrefix;
 	},
 	//开始转换 
 	"start" : function(s){
@@ -32,6 +36,32 @@ jQuery.feelywiki = {
 		s = s.replace(/\{_(.+)_\}/ig, "<u>$1</u>");
 		s = s.replace(/\{\+(.+)\+\}/ig, "<big>$1</big>");
 		s = s.replace(/\{-(.+)-\}/ig, "<small>$1</small>");
+		
+		//链接和图片
+		s = s.replace(/\[\[(http[s]?:\/\/.+) \| (http[s]?:\/\/.+\.(jpg|png|gif|jpeg)) x(\d+)\]\]/ig, function(){
+		    return "<a href=\""+arguments[1]+"\" target=\"_blank\"><img src=\""+arguments[2]+"\" width=\""+arguments[4]+"\"></a>";
+		});
+		s = s.replace(/\[\[(http[s]?:\/\/.+) \| (http[s]?:\/\/.+\.(jpg|png|gif|jpeg))\]\]/ig, function(){
+		    return "<a href=\""+arguments[1]+"\" target=\"_blank\"><img src=\""+arguments[2]+"\"></a>";
+		});
+		s = s.replace(/\[\[(http[s]?:\/\/.+) \| (.+)\]\]/ig, function(){
+		    return "<a href=\""+arguments[1]+"\" target=\"_blank\">"+arguments[2]+"</a>";
+		});
+		s = s.replace(/\[\[(.+) \| (.+)\]\]/ig, function(){
+		    return "<a href=\""+ jQuery.feelywiki.wikiPrefix +arguments[1]+"\">"+arguments[2]+"</a>";
+		});
+		s = s.replace(/\[\[(http[s]?:\/\/.+\.(jpg|png|gif|jpeg)) x(\d+)\]\]/ig, function(){
+		    return "<img src=\""+arguments[1]+"\" width=\""+arguments[3]+"\">";
+		});
+		s = s.replace(/\[\[(http[s]?:\/\/.+\.(jpg|png|gif|jpeg))\]\]/ig, function(){
+		    return "<img src=\""+arguments[1]+"\">";
+		});
+		s = s.replace(/\[\[(http[s]?:\/\/.+)\]\]/ig, function(){
+		    return "<a href=\""+arguments[1]+"\" target=\"_blank\">"+arguments[1]+"</a>";
+		});
+		s = s.replace(/\[\[(.+)\]\]/ig, function(){
+		    return "<a href=\""+ jQuery.feelywiki.wikiPrefix +arguments[1]+"\">"+arguments[1]+"</a>";
+		});
 		
 		if(s != "") s = "<p>" + s + "</p>";
 		return s;
@@ -92,8 +122,8 @@ jQuery.feelywiki = {
 			list = "ul";
 			return "<li>" + arguments[2] + "</li>";
 		});
-		if(list=="ol") s = s.replace(/<li>(.*)<\/li>(.|\n)*/igm, function(){return "<ol>" + arguments[0] + "</ol>"});
-		else if(list=="ul") s = s.replace(/<li>(.*)<\/li>(.|\n)*/igm, function(){return "<ul>" + arguments[0] + "</ul>"});
+		if(list=="ol") s = s.replace(/<li>(.*)<\/li>(.|\n)*/igm, function(){return "<ol>" + arguments[0] + "</ol>";});
+		else if(list=="ul") s = s.replace(/<li>(.*)<\/li>(.|\n)*/igm, function(){return "<ul>" + arguments[0] + "</ul>";});
 		//表格
 		s = s.replace(/\|\|((.+)\|\|)+/ig, function(){
 			flag = true;
@@ -105,14 +135,14 @@ jQuery.feelywiki = {
 		    }
 		    return "<tr>"+tds.join("")+"</tr>";
 		});
-		if(table) s = s.replace(/<tr>(.*)<\/tr>(.|\n)*/igm, function(){return "<table border=\"1\">" + arguments[0] + "</table>"});
+		if(table) s = s.replace(/<tr>(.*)<\/tr>(.|\n)*/igm, function(){return "<table border=\"1\">" + arguments[0] + "</table>";});
 		
 		//收集文本:
 		if(flag) return s;
 		else return "";
 	},
 	"__setTitle" : function(res0, res1){
-		$($.feelywiki.titleElem).html(res1);
+		jQuery(jQuery.feelywiki.titleElem).html(res1);
 		return "";
 	}
-}
+};

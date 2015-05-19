@@ -40,7 +40,10 @@
 		<script src="jquery.feelywikicode.js"></script>
 		<script>
 			$(function(){
-				$.feelywiki.setTitle("#title");
+				$.feelywiki.init({
+					"titleElem" : "#title",
+					"wikiPrefix" : "/wiki/",
+				})
 				$("#source").change(function(){
 					var result = $.feelywiki.start($("#source").val());
 					$("#result").html(result);

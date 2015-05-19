@@ -1,12 +1,18 @@
 #jquery_FeelyWikiCode
 
+这是一个jQuery的插件。目的是提供一种类Wiki的标记语言的前端转换。
+用于构造非可视化编辑器。
+
 用法：
 
 参考test.html的写法。
 
 如果要设置标题，必须先初始化：
 
-    $.feelywiki.setTitle("#title");
+    $.feelywiki.init({
+		"titleElem" : "#title", //标题元素
+		"wikiPrefix" : "/wiki/", //用于内部链接的地址前缀
+	})
 
 直接将字符串传入start方法来得到结果：
 
@@ -81,6 +87,34 @@
     =}
     注： 代码的显示样式由<code>标签提供，如果你需要代码着色，在该程序执行完毕后使用另外的程序。
 
+链接和图片：
+
+    注意竖线“|”的前后均有空格。
+    Wiki内部链接的URL前缀在Init时设置。 
+    
+    普通外部超链接
+    [[http://www.baidu.com]]
+    
+    重命名的外部超链接
+    [[http://www.baidu.com | 百度]]
+    
+    Wiki内部链接
+    [[Index]]
+    
+    重命名的Wiki内部链接
+    [[Index | 首页]]
+    
+    图片，仅支持jpg,jpeg,png,gif的后缀
+    [[http://blog.zyzsdy.com/wordpress/wp-content/themes/feelyblog/img/avatar.jpg]]
+    
+    限定大小的图片
+    [[http://blog.zyzsdy.com/wordpress/wp-content/themes/feelyblog/img/avatar.jpg x300]]
+    
+    图片超链接
+    [[http://www.baidu.com | http://blog.zyzsdy.com/wordpress/wp-content/themes/feelyblog/img/avatar.jpg]]
+    
+    限定大小的图片超链接
+    [[http://www.baidu.com | http://blog.zyzsdy.com/wordpress/wp-content/themes/feelyblog/img/avatar.jpg x300]]
 
 设定标题的不同显示法:
 
