@@ -26,6 +26,13 @@ jQuery.feelywiki = {
 		if(t != "") return t;
 		
 		//包含在p标签中。
+		s = s.replace(/'''''(.+)'''''/ig, "<b><i>$1</i></b>");
+		s = s.replace(/'''(.+)'''/ig, "<b>$1</b>");
+		s = s.replace(/''(.+)''/ig, "<i>$1</i>");
+		s = s.replace(/\{_(.+)_\}/ig, "<u>$1</u>");
+		s = s.replace(/\{\+(.+)\+\}/ig, "<big>$1</big>");
+		s = s.replace(/\{-(.+)-\}/ig, "<small>$1</small>");
+		
 		if(s != "") s = "<p>" + s + "</p>";
 		return s;
 	},
