@@ -20,14 +20,46 @@ jQuery.feelywiki = {
 	
 	//以下是私有成员函数
 	
-	//行处理器 
+	//段落处理器 
 	"__lineProcess" : function(s){
+		var para = false;
+		//本段落样式
+		var tStyle = [];
+		
 		//带有控制功能。
 		s = s.replace(/\(\:title (.+)\:\)/ig, this.__setTitle);
 		
-		//不带p标签
-		var t = this.__notParagraph(s);
-		if(t != "") return t;
+		//处理内嵌样式
+		s = s.replace(/\{%(.+?)% (.+?)\}/ig, function(){
+			para = true;
+            var st = [];
+		    arguments[1].split(" ").forEach(function(i){
+		        var config = i.split("=");
+		        if(config[0]=="color") st["color"]=config[1];
+		        if(config[0]=="size") st["font-size"]=config[1];
+			});
+			return jQuery.feelywiki.__setStyle("<span>"+arguments[2]+"</span>", st);
+		});
+		
+		//处理样式
+		s = s.replace(/%(.+?)%/ig, function(){
+		    var st = [];
+		    arguments[1].split(" ").forEach(function(i){
+		        var config = i.split("=");
+		        if(config[0]=="align") st["text-align"]=config[1];
+		        if(config[0]=="color") st["color"]=config[1];
+		        if(config[0]=="size") st["font-size"]=config[1];
+				if(config[0]=="float") st["float"]=config[1];
+		    });
+		    tStyle = st;
+		    return "";
+		});
+		
+		if(!para){
+			//不带p标签
+			var t = this.__notParagraph(s);
+			if(t != "") return this.__setStyle(t, tStyle);
+		}
 		
 		//包含在p标签中。
 		s = s.replace(/'''''(.+)'''''/ig, "<b><i>$1</i></b>");
@@ -68,7 +100,7 @@ jQuery.feelywiki = {
 		});
 		
 		if(s != "") s = "<p>" + s + "</p>";
-		return s;
+		return this.__setStyle(s, tStyle);
 	},
 	"__notParagraph" : function(s){
 		var flag = false;
@@ -119,12 +151,12 @@ jQuery.feelywiki = {
 		s = s.replace(/(# (.+).*)+/ig, function(){
 			flag = true;
 			list = "ol";
-			return "<li>" + arguments[2] + "</li>";
+			return "<li>" + jQuery.feelywiki.__lineProcess(arguments[2]) + "</li>";
 		});
 		s = s.replace(/(\* (.+).*)+/ig, function(){
 			flag = true;
 			list = "ul";
-			return "<li>" + arguments[2] + "</li>";
+			return "<li>" + jQuery.feelywiki.__lineProcess(arguments[2]) + "</li>";
 		});
 		if(list=="ol") s = s.replace(/<li>(.*)<\/li>(.|\n)*/igm, function(){return "<ol>" + arguments[0] + "</ol>";});
 		else if(list=="ul") s = s.replace(/<li>(.*)<\/li>(.|\n)*/igm, function(){return "<ul>" + arguments[0] + "</ul>";});
@@ -134,6 +166,7 @@ jQuery.feelywiki = {
 			table = true;
 		    var tds = arguments[2].split("||");
 		    for(var i=0; i<tds.length; i++){
+				tds[i] = jQuery.feelywiki.__lineProcess(tds[i]);
 		        if(tds[i][0]==":") tds[i] = tds[i].replace(/:(.*)/, "<th>$1</th>");
 		        else tds[i] = "<td>"+tds[i]+"</td>";
 		    }
@@ -148,5 +181,15 @@ jQuery.feelywiki = {
 	"__setTitle" : function(res0, res1){
 		jQuery(jQuery.feelywiki.titleElem).html(res1);
 		return "";
-	}
+	},
+	"__setStyle" : function(s, tStyle){
+		var styleArr = [];
+		for(var sn in tStyle){
+			styleArr.push(sn + ":" + tStyle[sn]);
+		}
+		var styleStr = styleArr.join(";");
+		return s.replace(/<(.+?)(( .+)*)>/, function(){
+		    return "<" + arguments[1] + " style=\"" + styleStr + "\"" + arguments[2] + ">";
+		});
+	},
 };

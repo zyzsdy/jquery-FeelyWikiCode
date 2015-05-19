@@ -118,6 +118,29 @@
     
     限定大小的图片超链接
     [[http://www.baidu.com | http://blog.zyzsdy.com/wordpress/wp-content/themes/feelyblog/img/avatar.jpg x300]]
+    
+对齐，浮动和样式：
+
+    支持4种样式的产生：color, size, align, float
+    在一整段里都会保持这种格式。
+    下面是使用示例：
+    
+    %color=red float=right size=20px%
+    ||:TITLE||:dfadsfa||
+    ||AA||BB||
+    
+    %align=center%
+    居中
+    
+    %align=right%
+    右对齐
+    
+内嵌样式：
+
+    内嵌样式仅限使用color和size属性。
+    例子：
+    内嵌样式是这样的，这里是{%color=red% 红字}。这里是{%size=20px% 设定字号为20px}。这些是其他文字。
+
 
 设定标题的不同显示法:
 
