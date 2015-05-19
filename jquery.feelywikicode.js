@@ -39,6 +39,7 @@ jQuery.feelywiki = {
 	"__notParagraph" : function(s){
 		var flag = false;
 		var list = "n";
+		var table = false;
 		s = s.replace(/={7,}/ig, function(res0){
 			flag = true;
 			return "<hr>";
@@ -67,6 +68,7 @@ jQuery.feelywiki = {
 			flag = true;
 			return "<h1>" + res1 + "</h1>";
 		});
+		//列表
 		s = s.replace(/(# (.+).*)+/ig, function(){
 			flag = true;
 			list = "ol";
@@ -79,6 +81,20 @@ jQuery.feelywiki = {
 		});
 		if(list=="ol") s = s.replace(/<li>(.*)<\/li>(.|\n)*/igm, function(){return "<ol>" + arguments[0] + "</ol>"});
 		else if(list=="ul") s = s.replace(/<li>(.*)<\/li>(.|\n)*/igm, function(){return "<ul>" + arguments[0] + "</ul>"});
+		//表格
+		s = s.replace(/\|\|((.+)\|\|)+/ig, function(){
+			flag = true;
+			table = true;
+		    var tds = arguments[2].split("||");
+		    for(var i=0; i<tds.length; i++){
+		        if(tds[i][0]==":") tds[i] = tds[i].replace(/:(.*)/, "<th>$1</th>");
+		        else tds[i] = "<td>"+tds[i]+"</td>";
+		    }
+		    return "<tr>"+tds.join("")+"</tr>";
+		});
+		if(table) s = s.replace(/<tr>(.*)<\/tr>(.|\n)*/igm, function(){return "<table border=\"1\">" + arguments[0] + "</table>"});
+		
+		//收集文本:
 		if(flag) return s;
 		else return "";
 	},
