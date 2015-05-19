@@ -34,10 +34,14 @@ jQuery.feelywiki = {
 		s = s.replace(/'''(.+)'''/ig, "<b>$1</b>");
 		s = s.replace(/''(.+)''/ig, "<i>$1</i>");
 		s = s.replace(/\{_(.+)_\}/ig, "<u>$1</u>");
+		s = s.replace(/\{~(.+)~\}/ig, "<del>$1</del>");
+		s = s.replace(/\{\+\+(.+)\+\+\}/ig, "<big><big>$1</big></big>");
+		s = s.replace(/\{--(.+)--\}/ig, "<small><small>$1</small></small>");
 		s = s.replace(/\{\+(.+)\+\}/ig, "<big>$1</big>");
 		s = s.replace(/\{-(.+)-\}/ig, "<small>$1</small>");
 		
 		//链接和图片
+		//注意一定要以下面的顺序替换，否则会出错。
 		s = s.replace(/\[\[(http[s]?:\/\/.+) \| (http[s]?:\/\/.+\.(jpg|png|gif|jpeg)) x(\d+)\]\]/ig, function(){
 		    return "<a href=\""+arguments[1]+"\" target=\"_blank\"><img src=\""+arguments[2]+"\" width=\""+arguments[4]+"\"></a>";
 		});
